@@ -19,7 +19,18 @@ print(formal2020)
 merged = pd.merge(formal2020, happy2020, left_on='Entity', right_on='Country', how='inner')
 merged = merged.drop(columns=['Country'])
 merged = merged.drop(columns=['Code'])
+merged = merged.drop(columns=['Share of population with no formal education, 1820-2020'])
+merged = merged.drop(columns=['Year_y'])
 merged = merged.drop_duplicates(subset=['Entity'])
 
 pd.set_option('display.max_columns', None)
 print(merged)
+
+columns_of_interest = ['Share of population with some formal education, 1820-2020', 'Index']
+correlation_matrix = merged[columns_of_interest].corr()
+
+print(correlation_matrix)
+
+sb.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
+mp.title('Correlation Heatmap')
+mp.show()
