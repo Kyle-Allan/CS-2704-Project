@@ -18,6 +18,7 @@ print(formal2020)
 
 merged = pd.merge(formal2020, happy2020, left_on='Entity', right_on='Country', how='inner')
 merged = merged.drop(columns=['Country'])
+merged = merged.drop(columns=['Code'])
 merged = merged.drop_duplicates(subset=['Entity'])
 
 pd.set_option('display.max_columns', None)
