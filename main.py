@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as mp
 import seaborn as sb
+import numpy as np
 from scipy.stats import pearsonr
 
 
@@ -57,9 +58,12 @@ print(pearsonCorrelation(education2020Column, happyindex2020Column))
 merged2020 = dropUnnecessaryColumns(merged2020)
 printMerged(merged2020)
 
+
+meanHappyIndex2020 = np.nanmean(happyindex2020Column)
+print(meanHappyIndex2020)
+
+
 # making correlation matrix on the index column and population with formal education
 columns_of_interest = ['Share of population with some formal education, 1820-2020', 'Index']
 
 createHeatmap(columns_of_interest, merged2020)
-
-
