@@ -39,9 +39,17 @@ def pearsonCorrelation(educationColumn, happyIndex):
     return pearsonr(educationColumn, happyIndex)
 
 
-def printBasicHappyStatisticsInYear(dataframe, year):
+def printBasicStatisticsInYear(dataframe, year):
     dataframe = dataframe[dataframe['Year'] == year]
     print('Mean happiness index in year', year, ' is ', np.nanmean(dataframe['Index'].tolist()))
+    print('Min happiness index in year', year, ' is ', dataframe['Index'].min())
+    print('Max happiness index in year', year, ' is ', dataframe['Index'].max())
+    print('Std Dev happiness index in year', year, ' is ', dataframe['Index'].std())
+    print('Mean share of population with some formal education in year', year, ' is ',
+          np.nanmean(dataframe['Share of population with some formal education, 1820-2020'].tolist()))
+    print('Min share of population with some formal education in year', year, ' is ', dataframe['Share of population with some formal education, 1820-2020'].min())
+    print('Max share of population with some formal education in year', year, ' is ', dataframe['Share of population with some formal education, 1820-2020'].max())
+    print('Std Dev share of population with some formal education in year', year, ' is ', dataframe['Share of population with some formal education, 1820-2020'].std())
 
 
 # datasets
@@ -62,26 +70,26 @@ merged = mergeDatasets(formalEducation, happinessIndex)
 merged = cleanDataframe(merged)
 print(merged)
 
-
+'''
 merged2020 = dfSpecificYearOnly(merged, 2020)
 print(merged2020)
 
 merged2015 = dfSpecificYearOnly(merged, 2015)
 print(merged2015)
-
-printBasicHappyStatisticsInYear(merged, 2015)
-printBasicHappyStatisticsInYear(merged, 2020)
-
-
 '''
-# creating list of education percent and happiness index where value of year is 2020 so I can do a p value on it
-education2020Column = merged2020['Share of population with some formal education, 1820-2020'].tolist()
-happyindex2020Column = merged2020['Index'].tolist()
-print(pearsonCorrelation(education2020Column, happyindex2020Column))
 
-printBasicHappyStatisticsInYear(happinessIndex, 2020)
+printBasicStatisticsInYear(merged, 2015)
+print()
+printBasicStatisticsInYear(merged, 2020)
 
-'''
+
+# crea
+# ting list of education percent and happiness index where value of year is 2020 so I can do a p value on it
+educationColumn = merged['Share of population with some formal education, 1820-2020'].tolist()
+happyindexColumn = merged['Index'].tolist()
+# print(pearsonCorrelation(educationColumn, happyindexColumn))
+
+
 # making correlation matrix on the index column and population with formal education
 columnsOfInterest = ['Share of population with some formal education, 1820-2020', 'Index']
 # heatmap on columns above
