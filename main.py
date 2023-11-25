@@ -85,9 +85,9 @@ printBasicStatisticsInYear(merged, 2020)
 
 # crea
 # ting list of education percent and happiness index where value of year is 2020 so I can do a p value on it
-educationColumn = merged['Share of population with some formal education, 1820-2020'].tolist()
+formalEducationColumn = merged['Share of population with some formal education, 1820-2020'].tolist()
 happyindexColumn = merged['Index'].tolist()
-# print(pearsonCorrelation(educationColumn, happyindexColumn))
+# print(pearsonCorrelation(formalEducationColumn, happyindexColumn))
 
 
 # making correlation matrix on the index column and population with formal education
@@ -95,3 +95,8 @@ columnsOfInterest = ['Share of population with some formal education, 1820-2020'
 # heatmap on columns above
 createHeatmap(columnsOfInterest, merged)
 
+
+sb.lmplot(x='Share of population with some formal education, 1820-2020', y='Index', hue='Year', data=merged, scatter_kws={'s': 50}, height=6, aspect=1.5)
+mp.xlabel('Share of population with some formal education 2015/2020')
+mp.ylabel('Happiness Index')
+mp.show()
