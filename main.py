@@ -57,26 +57,12 @@ formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Pyt
 happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
 pd.set_option('display.max_columns', None)
 
-'''
-# dataframe with only values in year 2020
-happy2020 = dfSpecificYearOnly(happinessIndex, 2020)
-formal2020 = dfSpecificYearOnly(formalEducation, 2020)
-
-print(happy2020)
-'''
 
 # merging datasets
 merged = mergeDatasets(formalEducation, happinessIndex)
 merged = cleanDataframe(merged)
 print(merged)
 
-'''
-merged2020 = dfSpecificYearOnly(merged, 2020)
-print(merged2020)
-
-merged2015 = dfSpecificYearOnly(merged, 2015)
-print(merged2015)
-'''
 
 printBasicStatisticsInYear(merged, 2015)
 print()
