@@ -91,14 +91,14 @@ createIndexDataColumns(pivoted_df)
 print(pivoted_df)
 positiveIndexDifference_sum = pivoted_df[pivoted_df['Index Difference'] > 0]['Index Difference'].sum()
 negativeIndexDifference_sum = pivoted_df[pivoted_df['Index Difference'] < 0]['Index Difference'].sum()
-
+totalIndexDifference = positiveIndexDifference_sum + negativeIndexDifference_sum
 
 fig, ax = mp.subplots()
 ax.axis('off')  # Turn off axis for table
 # Table data
-table_data = [['Positive Index Difference Sum', positiveIndexDifference_sum], ['Negative Index Difference Sum', negativeIndexDifference_sum]]
+table_data = [['Positive Index Difference Sum', positiveIndexDifference_sum], ['Negative Index Difference Sum', negativeIndexDifference_sum], ['Total Index Difference: 2020 to 2015', totalIndexDifference]]
 # Create a table
-table = ax.table(cellText=table_data, colLabels=['Category', 'Sum'], cellLoc = 'center', loc='center')
+table = ax.table(cellText=table_data, colLabels=['Category', 'Sum'], cellLoc='center', loc='center')
 # Display the table
 mp.title('Happiness Index Difference: 2020 compared to 2015')
 mp.show()
