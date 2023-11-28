@@ -52,6 +52,13 @@ def printBasicStatisticsInYear(dataframe, year):
     print('Std Dev share of population with some formal education in year', year, ' is ', dataframe['Share of population with some formal education, 1820-2020'].std())
 
 
+def createIndexDataColumns(sample):
+    sample['Index Difference'] = sample['2020_Index'] - sample['2015_Index']
+    sample['Index Percent Change'] = ((sample['2020_Index'] - sample['2015_Index']) / sample['2015_Index']) * 100
+    sample['Education Difference '] = sample['2020_Share of population with some formal education, 1820-2020'] - sample['2015_Share of population with some formal education, 1820-2020']
+    sample['Education Percent Change'] = ((sample['2020_Share of population with some formal education, 1820-2020'] - sample['2015_Share of population with some formal education, 1820-2020']) / sample['2015_Share of population with some formal education, 1820-2020']) * 100
+
+
 # datasets
 formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\Formal Education.xlsx')
 happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
@@ -69,17 +76,50 @@ print()
 printBasicStatisticsInYear(merged, 2020)
 
 
-# crea
-# ting list of education percent and happiness index where value of year is 2020 so I can do a p value on it
-formalEducationColumn = merged['Share of population with some formal education, 1820-2020'].tolist()
-happyindexColumn = merged['Index'].tolist()
-# print(pearsonCorrelation(formalEducationColumn, happyindexColumn))
+
+# Pivot the DataFrame
+pivoted_df = merged.pivot(index='Entity', columns='Year', values=['Index', 'Rank', 'Share of population with some formal education, 1820-2020'])
+# Flatten the multi-level columns
+pivoted_df.columns = ['{}_{}'.format(col[1], col[0]) for col in pivoted_df.columns]
+# Reset the index to make 'Entity' a column again
+pivoted_df.reset_index(inplace=True)
+# Display the new DataFrame
+print(pivoted_df)
+
+
+createIndexDataColumns(pivoted_df)
+print(pivoted_df)
+positiveIndexDifference_sum = pivoted_df[pivoted_df['Index Difference'] > 0]['Index Difference'].sum()
+negativeIndexDifference_sum = pivoted_df[pivoted_df['Index Difference'] < 0]['Index Difference'].sum()
+
+
+fig, ax = mp.subplots()
+ax.axis('off')  # Turn off axis for table
+# Table data
+table_data = [['Positive Index Difference Sum', positiveIndexDifference_sum], ['Negative Index Difference Sum', negativeIndexDifference_sum]]
+# Create a table
+table = ax.table(cellText=table_data, colLabels=['Category', 'Sum'], cellLoc = 'center', loc='center')
+# Display the table
+mp.title('Happiness Index Difference: 2020 compared to 2015')
+mp.show()
 
 
 # making correlation matrix on the index column and population with formal education
 columnsOfInterest = ['Share of population with some formal education, 1820-2020', 'Index']
 # heatmap on columns above
 createHeatmap(columnsOfInterest, merged)
+
+
+sb.lmplot(x='Share of population with some formal education, 1820-2020', y='Index', hue='Year', data=merged[merged['Year'] == 2015], scatter_kws={'s': 50}, height=6, aspect=1.5)
+mp.xlabel('Share of population with some formal education 2015')
+mp.ylabel('Happiness Index')
+mp.show()
+
+
+sb.lmplot(x='Share of population with some formal education, 1820-2020', y='Index', hue='Year', data=merged[merged['Year'] == 2020], scatter_kws={'s': 50}, height=6, aspect=1.5)
+mp.xlabel('Share of population with some formal education 2020')
+mp.ylabel('Happiness Index')
+mp.show()
 
 
 sb.lmplot(x='Share of population with some formal education, 1820-2020', y='Index', hue='Year', data=merged, scatter_kws={'s': 50}, height=6, aspect=1.5)
