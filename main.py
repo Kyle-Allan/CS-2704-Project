@@ -60,6 +60,8 @@ def createPivotedDf(merged):
 def cleanPivotedDf(pivoted_df):
     pivoted_df.rename(columns={'2015_Share of population with some formal education, 1820-2020': '2015_Share of population with some formal education'}, inplace=True)
     pivoted_df.rename(columns={'2020_Share of population with some formal education, 1820-2020': '2020_Share of population with some formal education'}, inplace=True)
+    cleanedUpDataFrame = pivoted_df.dropna()
+    return cleanedUpDataFrame
 
 
 # datasets
@@ -75,12 +77,12 @@ print(merged)
 
 # creating dataframe with all relevant info on entity in one row
 pivoted_df = createPivotedDf(merged)
-cleanPivotedDf(pivoted_df)
-print(pivoted_df)
+pivoted_df = cleanPivotedDf(pivoted_df)
 # adding extra calculated data to dataframe
 createIndexDataColumns(pivoted_df)
 print(pivoted_df)
 
+print(pearsonCorrelation(pivoted_df['2015_Share of population with some formal education'], pivoted_df['2015_Index']))
 
 def createAndDisplayBasicHappyStatistics(pivoted_df):
     # calculating sum of positive and negative differences
