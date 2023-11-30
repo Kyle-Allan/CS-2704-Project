@@ -84,22 +84,16 @@ print(pivoted_df)
 
 print(pearsonCorrelation(pivoted_df['2015_Share of population with some formal education'], pivoted_df['2015_Index']))
 
-def createAndDisplayBasicHappyStatistics(pivoted_df):
-    # calculating sum of positive and negative differences
-    positiveIndexDifference_sum = pivoted_df[pivoted_df['Index Difference'] > 0]['Index Difference'].sum()
-    negativeIndexDifference_sum = pivoted_df[pivoted_df['Index Difference'] < 0]['Index Difference'].sum()
-    totalIndexSum2015 = pivoted_df['2015_Index'].sum()
-    totalIndexSum2020 = pivoted_df['2020_Index'].sum()
-    totalIndexDifference = positiveIndexDifference_sum + negativeIndexDifference_sum
 
-    stdDev_2015 = pivoted_df['2015_Index'].std()
-    stdDev_2020 = pivoted_df['2020_Index'].std()
-    minIndex_2015 = pivoted_df['2015_Index'].min()
-    minIndex_2020 = pivoted_df['2020_Index'].min()
-    maxIndex_2015 = pivoted_df['2015_Index'].max()
-    maxIndex_2020 = pivoted_df['2020_Index'].max()
-    meanIndex_2015 = pivoted_df['2015_Index'].mean()
-    meanIndex_2020 = pivoted_df['2020_Index'].mean()
+def createAndDisplayBasicHappyStatistics(pivoted_df):
+    stdDev_2015 = round(pivoted_df['2015_Index'].std(), 2)
+    stdDev_2020 = round(pivoted_df['2020_Index'].std(), 2)
+    minIndex_2015 = round(pivoted_df['2015_Index'].min(), 2)
+    minIndex_2020 = round(pivoted_df['2020_Index'].min(), 2)
+    maxIndex_2015 = round(pivoted_df['2015_Index'].max(), 2)
+    maxIndex_2020 = round(pivoted_df['2020_Index'].max(), 2)
+    meanIndex_2015 = round(pivoted_df['2015_Index'].mean(), 2)
+    meanIndex_2020 = round(pivoted_df['2020_Index'].mean(), 2)
 
 
     fig, ax = mp.subplots()
@@ -111,6 +105,7 @@ def createAndDisplayBasicHappyStatistics(pivoted_df):
     table = ax.table(cellText=table_data, colLabels=['Year', 'Min Index', 'Max Index', 'Mean Index', 'Standard Deviation'], cellLoc='center', loc='center')
     table.auto_set_font_size(False)
     table.set_fontsize(18)
+    table.auto_set_column_width([0, 1, 2, 3, 4])
     # Display the table
     mp.title('Happiness Statistics', fontsize=20)
     mp.show()
@@ -120,14 +115,14 @@ createAndDisplayBasicHappyStatistics(pivoted_df)
 
 
 def createAndDisplayBasicEducationStatistics(pivoted_df):
-    stdDev_2015 = pivoted_df['2015_Share of population with some formal education'].std()
-    stdDev_2020 = pivoted_df['2020_Share of population with some formal education'].std()
-    minEducation_2015 = pivoted_df['2015_Share of population with some formal education'].min()
-    minEducation_2020 = pivoted_df['2020_Share of population with some formal education'].min()
-    maxEducation_2015 = pivoted_df['2015_Share of population with some formal education'].max()
-    maxEducation_2020 = pivoted_df['2020_Share of population with some formal education'].max()
-    meanEducation_2015 = pivoted_df['2015_Share of population with some formal education'].mean()
-    meanEducation_2020 = pivoted_df['2020_Share of population with some formal education'].mean()
+    stdDev_2015 = round(pivoted_df['2015_Share of population with some formal education'].std(), 2)
+    stdDev_2020 = round(pivoted_df['2020_Share of population with some formal education'].std(), 2)
+    minEducation_2015 = round(pivoted_df['2015_Share of population with some formal education'].min(), 2)
+    minEducation_2020 = round(pivoted_df['2020_Share of population with some formal education'].min(), 2)
+    maxEducation_2015 = round(pivoted_df['2015_Share of population with some formal education'].max(), 2)
+    maxEducation_2020 = round(pivoted_df['2020_Share of population with some formal education'].max(), 2)
+    meanEducation_2015 = round(pivoted_df['2015_Share of population with some formal education'].mean(), 2)
+    meanEducation_2020 = round(pivoted_df['2020_Share of population with some formal education'].mean(), 2)
 
 
     fig, ax = mp.subplots()
@@ -141,6 +136,7 @@ def createAndDisplayBasicEducationStatistics(pivoted_df):
                      cellLoc='center', loc='center')
     table.auto_set_font_size(False)
     table.set_fontsize(18)
+    table.auto_set_column_width([0, 1, 2, 3, 4])
     # Display the table
     mp.title('Education Statistics', fontsize=20)
     mp.show()
