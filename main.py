@@ -112,25 +112,25 @@ fig, axes = mp.subplots(nrows=2, ncols=2, figsize=(12, 10))
 
 # Plot histogram for Happiness Index 2015
 axes[0, 0].hist(pivoted_df['2015_Index'], bins='auto', edgecolor='black', color='skyblue')
-axes[0, 0].set_title('Histogram of Happiness Index in 2015')
+axes[0, 0].set_title('Happiness Index in 2015')
 axes[0, 0].set_xlabel('Happiness Index')
 axes[0, 0].set_ylabel('Frequency')
 
 # Plot histogram for Education Levels 2015
 axes[0, 1].hist(pivoted_df['2015_Share of population with some formal education'], bins='auto', edgecolor='black', color='lightcoral')
-axes[0, 1].set_title('Histogram of Education Levels in 2015')
+axes[0, 1].set_title('Education Levels in 2015')
 axes[0, 1].set_xlabel('Education Levels')
 axes[0, 1].set_ylabel('Frequency')
 
 # Plot histogram for Happiness Index 2020
 axes[1, 0].hist(pivoted_df['2020_Index'], bins='auto', edgecolor='black', color='skyblue')
-axes[1, 0].set_title('Histogram of Happiness Index in 2020')
+axes[1, 0].set_title('Happiness Index in 2020')
 axes[1, 0].set_xlabel('Happiness Index')
 axes[1, 0].set_ylabel('Frequency')
 
 # Plot histogram for Education Levels 2020
 axes[1, 1].hist(pivoted_df['2020_Share of population with some formal education'], bins='auto', edgecolor='black', color='lightcoral')
-axes[1, 1].set_title('Histogram of Education Levels in 2020')
+axes[1, 1].set_title('Education Levels in 2020')
 axes[1, 1].set_xlabel('Education Levels')
 axes[1, 1].set_ylabel('Frequency')
 
