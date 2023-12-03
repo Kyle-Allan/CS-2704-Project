@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as mp
 import seaborn as sb
 import numpy as np
+import statsmodels.api as sm
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from scipy.stats import pearsonr, shapiro, spearmanr
@@ -108,24 +109,24 @@ print(f"Shapiro-Wilk Test for Education Levels - Statistic 2020: {statistic_educ
 
 print(pivoted_df)
 
-
+''' predictive model stuff
 X_train, X_test, y_train, y_test = train_test_split(np.array(pivoted_df['2015_Index']).reshape(-1, 1), np.array(pivoted_df['2015_Share of population with some formal education']), test_size=0.2, random_state=0)
 model = LinearRegression()
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
 
 
-
-
-
-
-mp.scatter(y_test, y_pred, color='skyblue', label='Actual')
-mp.scatter(y_test, y_pred, color='lightcoral', label='Predicted')
-mp.xlabel('Actual')
-mp.ylabel('Predicted')
-mp.title('Actual vs Predicted')
-mp.legend()
-mp.show()
+# Add a constant term to the predictor variable
+X_train = sm.add_constant(X_train)
+# Fit the linear regression model
+model = sm.OLS(y_train, X_train).fit()
+# Get the summary of the model
+print(model.summary())
+# Calculate prediction intervals for the predictions
+predictions = model.get_prediction(sm.add_constant(X_test))
+prediction_intervals = predictions.summary_frame(alpha=0.05)
+print(prediction_intervals)
+'''
 
 
 # Create subplots for side-by-side histograms
