@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as mp
 import seaborn as sb
 import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 from scipy.stats import pearsonr, shapiro, spearmanr
 
 
@@ -105,6 +107,25 @@ print(f"Shapiro-Wilk Test for Happiness Index - Statistic 2020: {statistic_happi
 print(f"Shapiro-Wilk Test for Education Levels - Statistic 2020: {statistic_education}, P-value: {p_value_education}")
 
 print(pivoted_df)
+
+
+X_train, X_test, y_train, y_test = train_test_split(np.array(pivoted_df['2015_Index']).reshape(-1, 1), np.array(pivoted_df['2015_Share of population with some formal education']), test_size=0.2, random_state=0)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+
+
+
+
+
+mp.scatter(y_test, y_pred, color='skyblue', label='Actual')
+mp.scatter(y_test, y_pred, color='lightcoral', label='Predicted')
+mp.xlabel('Actual')
+mp.ylabel('Predicted')
+mp.title('Actual vs Predicted')
+mp.legend()
+mp.show()
 
 
 # Create subplots for side-by-side histograms
