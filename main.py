@@ -67,7 +67,7 @@ def cleanPivotedDf(pivoted_df):
     return cleanedUpDataFrame
 
 
-# datasets
+# loading datasets
 formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\Formal Education.xlsx')
 happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
 pd.set_option('display.max_columns', None)
@@ -75,7 +75,6 @@ pd.set_option('display.max_columns', None)
 # merging datasets
 merged = mergeDatasets(formalEducation, happinessIndex)
 merged = cleanDataframe(merged)
-# print(merged)
 
 
 # creating dataframe with all relevant info on entity in one row
@@ -108,25 +107,6 @@ print(f"Shapiro-Wilk Test for Happiness Index - Statistic 2020: {statistic_happi
 print(f"Shapiro-Wilk Test for Education Levels - Statistic 2020: {statistic_education}, P-value: {p_value_education}")
 
 print(pivoted_df)
-
-''' predictive model stuff
-X_train, X_test, y_train, y_test = train_test_split(np.array(pivoted_df['2015_Index']).reshape(-1, 1), np.array(pivoted_df['2015_Share of population with some formal education']), test_size=0.2, random_state=0)
-model = LinearRegression()
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-
-
-# Add a constant term to the predictor variable
-X_train = sm.add_constant(X_train)
-# Fit the linear regression model
-model = sm.OLS(y_train, X_train).fit()
-# Get the summary of the model
-print(model.summary())
-# Calculate prediction intervals for the predictions
-predictions = model.get_prediction(sm.add_constant(X_test))
-prediction_intervals = predictions.summary_frame(alpha=0.05)
-print(prediction_intervals)
-'''
 
 
 # Create subplots for side-by-side histograms
