@@ -5,10 +5,35 @@ from scipy.stats import shapiro, spearmanr
 
 # before looking at levels of education
 
+
 def mergeDatasets(formal, happy):
     # merging datasets by country names
     mergedDataset = pd.merge(formal, happy, left_on=['Entity', 'Year'], right_on=['Country', 'Year'], how='inner')
     return mergedDataset
+
+
+def cleanEducationLevelDf(newDf):
+    return newDf.drop(columns=['Code'])
+
+
+def mergeLevelOfEducationDatasets(first, second):
+    mergedEducation = pd.merge(first, second, on=['Entity', 'Year'], how='inner')
+    return mergedEducation
+
+
+def filterYearsEducationLevelDf(df):
+    filteredDf = df[(df['Year'] == 2015) | (df['Year'] == 2020)]
+    return filteredDf
+
+
+def mergeEducationLevelsWithHappiness(education, happy):
+    # merging datasets by country names
+    mergedDataset = pd.merge(education, happy, left_on=['Entity', 'Year'], right_on=['Country', 'Year'], how='inner')
+    return mergedDataset
+
+
+
+
 
 
 def cleanDataframe(df):
@@ -44,19 +69,49 @@ def createPivotedDf(merged):
     return data
 
 
-def cleanPivotedDf(cleanedDataframe):
+def cleanDf(cleanedDataframe):
     cleanedDataframe.rename(columns={'2015_Share of population with some formal education, 1820-2020': '2015_Share of population with some formal education'}, inplace=True)
     cleanedDataframe.rename(columns={'2020_Share of population with some formal education, 1820-2020': '2020_Share of population with some formal education'}, inplace=True)
     cleanedUpDataFrame = cleanedDataframe.dropna()
     return cleanedUpDataFrame
 
 
-# loading datasets
-formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\Formal Education.xlsx')
-happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
 pd.set_option('display.max_columns', None)
 
 
+# loading new datasets
+enrollmentPrimary = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\PrimaryEducationEnrollment.xlsx')
+enrollmentSecondary = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\SecondaryEducationEnrollment.xlsx')
+enrollmentTertiary = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\TertiaryEducationEnrollment.xlsx')
+
+enrollmentPrimary = cleanEducationLevelDf(enrollmentPrimary)
+enrollmentSecondary = cleanEducationLevelDf(enrollmentSecondary)
+enrollmentTertiary = cleanEducationLevelDf(enrollmentTertiary)
+
+threeLevelOfEducationDf = mergeLevelOfEducationDatasets(enrollmentPrimary, enrollmentSecondary)
+threeLevelOfEducationDf = mergeLevelOfEducationDatasets(threeLevelOfEducationDf, enrollmentTertiary)
+threeLevelOfEducationDf = filterYearsEducationLevelDf(threeLevelOfEducationDf)
+
+
+# loading datasets
+formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\Formal Education.xlsx')
+happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
+
+
+pleaseWork = mergeEducationLevelsWithHappiness(threeLevelOfEducationDf, happinessIndex)
+pleaseWork = pleaseWork.drop(columns=['Country'])
+print(pleaseWork)
+
+
+
+
+
+
+
+
+
+
+'''
 # merging datasets
 merged = mergeDatasets(formalEducation, happinessIndex)
 merged = cleanDataframe(merged)
@@ -64,10 +119,11 @@ merged = cleanDataframe(merged)
 
 # creating dataframe with all relevant info on entity in one row
 cleanedDataframe = createPivotedDf(merged)
-cleanedDataframe = cleanPivotedDf(cleanedDataframe)
+cleanedDataframe = cleanDf(cleanedDataframe)
 # adding extra calculated data to dataframe
 createYearDifferenceDataColumns(cleanedDataframe)
 
+print(cleanedDataframe)
 
 
 # shapiro test of normality
@@ -191,14 +247,16 @@ def createAndDisplayBasicEducationStatistics(cleanedDataframe):
 
 createAndDisplayBasicEducationStatistics(cleanedDataframe)
 
-'''
+
 # making correlation matrix on the index column and population with formal education
 columnsOfInterest = ['Share of population with some formal education, 1820-2020', 'Index']
 # heatmap on columns above
 createHeatmap(columnsOfInterest, merged)
-'''
+
 
 sb.lmplot(x='Share of population with some formal education, 1820-2020', y='Index', hue='Year', data=merged, scatter_kws={'s': 50}, height=6, aspect=1.5)
 mp.xlabel('Share of population with some formal education 2015/2020')
 mp.ylabel('Happiness Index')
 mp.show()
+'''
+print()
