@@ -33,6 +33,22 @@ def mergeEducationLevelsWithHappiness(education, happy):
 
 
 
+def renameEducationLevelDf(df):
+    df.rename(columns={'School enrollment, primary (% gross)': 'primary enrollment'}, inplace=True)
+    df.rename(columns={'School enrollment, secondary (% gross)': 'secondary enrollment'}, inplace=True)
+    df.rename(columns={'School enrollment, tertiary (% gross)': 'tertiary enrollment'}, inplace=True)
+    return df
+
+
+def createPivotedForNewDf(merged):
+    # Pivot the DataFrame
+    data = merged.pivot(index='Entity', columns='Year',
+                              values=['Index', 'Rank', 'primary enrollment', 'secondary enrollment', 'tertiary enrollment'])
+    # Flatten the multi-level columns
+    data.columns = ['{}_{}'.format(col[1], col[0]) for col in data.columns]
+    # Reset the index to make 'Entity' a column again
+    data.reset_index(inplace=True)
+    return data
 
 
 
@@ -100,6 +116,8 @@ happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Pyth
 
 pleaseWork = mergeEducationLevelsWithHappiness(threeLevelOfEducationDf, happinessIndex)
 pleaseWork = pleaseWork.drop(columns=['Country'])
+pleaseWork = renameEducationLevelDf(pleaseWork)
+pleaseWork = createPivotedForNewDf(pleaseWork)
 print(pleaseWork)
 
 
