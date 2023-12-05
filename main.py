@@ -1,22 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as mp
 import seaborn as sb
-import numpy as np
-import statsmodels.api as sm
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from scipy.stats import pearsonr, shapiro, spearmanr
+from scipy.stats import shapiro, spearmanr
 
 
 def mergeDatasets(formal, happy):
     # merging datasets by country names
     mergedDataset = pd.merge(formal, happy, left_on=['Entity', 'Year'], right_on=['Country', 'Year'], how='inner')
     return mergedDataset
-
-
-def dfSpecificYearOnly(dataframe, year):
-    dataframe = dataframe[dataframe['Year'] == year]
-    return dataframe
 
 
 def cleanDataframe(df):
@@ -26,20 +17,12 @@ def cleanDataframe(df):
     return df
 
 
-def printMerged(mergedDF):
-    print(mergedDF)
-
-
 def createHeatmap(columns, dataFrame):
     correlation_matrix = dataFrame[columns].corr()
     # creating heatmap of the correlation matrix above
     sb.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=.5)
     mp.title('Correlation Heatmap')
     mp.show()
-
-
-def pearsonCorrelation(educationColumn, happyIndex):
-    return pearsonr(educationColumn, happyIndex)
 
 
 def createIndexDataColumns(sample):
@@ -60,10 +43,10 @@ def createPivotedDf(merged):
     return data
 
 
-def cleanPivotedDf(pivoted_df):
-    pivoted_df.rename(columns={'2015_Share of population with some formal education, 1820-2020': '2015_Share of population with some formal education'}, inplace=True)
-    pivoted_df.rename(columns={'2020_Share of population with some formal education, 1820-2020': '2020_Share of population with some formal education'}, inplace=True)
-    cleanedUpDataFrame = pivoted_df.dropna()
+def cleanPivotedDf(cleanedDataframe):
+    cleanedDataframe.rename(columns={'2015_Share of population with some formal education, 1820-2020': '2015_Share of population with some formal education'}, inplace=True)
+    cleanedDataframe.rename(columns={'2020_Share of population with some formal education, 1820-2020': '2020_Share of population with some formal education'}, inplace=True)
+    cleanedUpDataFrame = cleanedDataframe.dropna()
     return cleanedUpDataFrame
 
 
@@ -72,66 +55,68 @@ formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Pyt
 happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
 pd.set_option('display.max_columns', None)
 
+
 # merging datasets
 merged = mergeDatasets(formalEducation, happinessIndex)
 merged = cleanDataframe(merged)
 
 
 # creating dataframe with all relevant info on entity in one row
-pivoted_df = createPivotedDf(merged)
-pivoted_df = cleanPivotedDf(pivoted_df)
+cleanedDataframe = createPivotedDf(merged)
+cleanedDataframe = cleanPivotedDf(cleanedDataframe)
 # adding extra calculated data to dataframe
-createIndexDataColumns(pivoted_df)
+createIndexDataColumns(cleanedDataframe)
 # print(pivoted_df)
 
+
 # spearman rank test to test normality of data
-corr, pval = spearmanr(pivoted_df['2015_Index'], pivoted_df['2015_Share of population with some formal education'])
+corr, pval = spearmanr(cleanedDataframe['2015_Index'], cleanedDataframe['2015_Share of population with some formal education'])
 print("Spearman's rank correlation coefficient for 2015:", corr)
 print("P-value for 2015:", pval)
 
-corr, pval = spearmanr(pivoted_df['2020_Index'], pivoted_df['2020_Share of population with some formal education'])
+corr, pval = spearmanr(cleanedDataframe['2020_Index'], cleanedDataframe['2020_Share of population with some formal education'])
 print("Spearman's rank correlation coefficient for 2020:", corr)
 print("P-value for 2020:", pval)
 
+
 # shapiro test since my data is not normally distributed that gives the p value and correlation coefficient
-statistic_happiness, p_value_happiness = shapiro(pivoted_df['2015_Index'])
-statistic_education, p_value_education = shapiro(pivoted_df['2015_Share of population with some formal education'])
+statistic_happiness, p_value_happiness = shapiro(cleanedDataframe['2015_Index'])
+statistic_education, p_value_education = shapiro(cleanedDataframe['2015_Share of population with some formal education'])
 # moderate positive monotonic relationship between the variables and super small p value means statistically sig
 print(f"Shapiro-Wilk Test for Happiness Index - Statistic 2015: {statistic_happiness}, P-value: {p_value_happiness}")
 print(f"Shapiro-Wilk Test for Education Levels - Statistic 2015: {statistic_education}, P-value: {p_value_education}")
 
-statistic_happiness, p_value_happiness = shapiro(pivoted_df['2020_Index'])
-statistic_education, p_value_education = shapiro(pivoted_df['2020_Share of population with some formal education'])
+statistic_happiness, p_value_happiness = shapiro(cleanedDataframe['2020_Index'])
+statistic_education, p_value_education = shapiro(cleanedDataframe['2020_Share of population with some formal education'])
 #moderate postiive monotonic relationship and p val is small which means statistical sig
 print(f"Shapiro-Wilk Test for Happiness Index - Statistic 2020: {statistic_happiness}, P-value: {p_value_happiness}")
 print(f"Shapiro-Wilk Test for Education Levels - Statistic 2020: {statistic_education}, P-value: {p_value_education}")
 
-print(pivoted_df)
+print(cleanedDataframe)
 
 
-# Create subplots for side-by-side histograms
 fig, axes = mp.subplots(nrows=2, ncols=2, figsize=(12, 10))
 
 # Plot histogram for Happiness Index 2015
-axes[0, 0].hist(pivoted_df['2015_Index'], bins='auto', edgecolor='black', color='skyblue')
+axes[0, 0].hist(cleanedDataframe['2015_Index'], bins='auto', edgecolor='black', color='skyblue')
 axes[0, 0].set_title('Happiness Index in 2015')
 axes[0, 0].set_xlabel('Happiness Index')
 axes[0, 0].set_ylabel('Frequency')
 
 # Plot histogram for Education Levels 2015
-axes[0, 1].hist(pivoted_df['2015_Share of population with some formal education'], bins='auto', edgecolor='black', color='lightcoral')
+axes[0, 1].hist(cleanedDataframe['2015_Share of population with some formal education'], bins='auto', edgecolor='black', color='lightcoral')
 axes[0, 1].set_title('Education Levels in 2015')
 axes[0, 1].set_xlabel('Education Levels')
 axes[0, 1].set_ylabel('Frequency')
 
 # Plot histogram for Happiness Index 2020
-axes[1, 0].hist(pivoted_df['2020_Index'], bins='auto', edgecolor='black', color='skyblue')
+axes[1, 0].hist(cleanedDataframe['2020_Index'], bins='auto', edgecolor='black', color='skyblue')
 axes[1, 0].set_title('Happiness Index in 2020')
 axes[1, 0].set_xlabel('Happiness Index')
 axes[1, 0].set_ylabel('Frequency')
 
 # Plot histogram for Education Levels 2020
-axes[1, 1].hist(pivoted_df['2020_Share of population with some formal education'], bins='auto', edgecolor='black', color='lightcoral')
+axes[1, 1].hist(cleanedDataframe['2020_Share of population with some formal education'], bins='auto', edgecolor='black', color='lightcoral')
 axes[1, 1].set_title('Education Levels in 2020')
 axes[1, 1].set_xlabel('Education Levels')
 axes[1, 1].set_ylabel('Frequency')
@@ -170,7 +155,7 @@ def createAndDisplayBasicHappyStatistics(pivoted_df):
     mp.show()
 
 
-createAndDisplayBasicHappyStatistics(pivoted_df)
+createAndDisplayBasicHappyStatistics(cleanedDataframe)
 
 
 def createAndDisplayBasicEducationStatistics(pivoted_df):
@@ -205,14 +190,14 @@ def createAndDisplayBasicEducationStatistics(pivoted_df):
     mp.show()
 
 
-createAndDisplayBasicEducationStatistics(pivoted_df)
+createAndDisplayBasicEducationStatistics(cleanedDataframe)
 
-
+'''
 # making correlation matrix on the index column and population with formal education
 columnsOfInterest = ['Share of population with some formal education, 1820-2020', 'Index']
 # heatmap on columns above
 createHeatmap(columnsOfInterest, merged)
-
+'''
 
 sb.lmplot(x='Share of population with some formal education, 1820-2020', y='Index', hue='Year', data=merged, scatter_kws={'s': 50}, height=6, aspect=1.5)
 mp.xlabel('Share of population with some formal education 2015/2020')
