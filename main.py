@@ -25,7 +25,7 @@ def createHeatmap(columns, dataFrame):
     mp.show()
 
 
-def createIndexDataColumns(sample):
+def createYearDifferenceDataColumns(sample):
     sample['Index Difference'] = sample['2020_Index'] - sample['2015_Index']
     sample['Index Percent Change'] = ((sample['2020_Index'] - sample['2015_Index']) / sample['2015_Index']) * 100
     sample['Education Difference '] = sample['2020_Share of population with some formal education'] - sample['2015_Share of population with some formal education']
@@ -65,21 +65,11 @@ merged = cleanDataframe(merged)
 cleanedDataframe = createPivotedDf(merged)
 cleanedDataframe = cleanPivotedDf(cleanedDataframe)
 # adding extra calculated data to dataframe
-createIndexDataColumns(cleanedDataframe)
-# print(pivoted_df)
+createYearDifferenceDataColumns(cleanedDataframe)
 
 
-# spearman rank test to test normality of data
-corr, pval = spearmanr(cleanedDataframe['2015_Index'], cleanedDataframe['2015_Share of population with some formal education'])
-print("Spearman's rank correlation coefficient for 2015:", corr)
-print("P-value for 2015:", pval)
 
-corr, pval = spearmanr(cleanedDataframe['2020_Index'], cleanedDataframe['2020_Share of population with some formal education'])
-print("Spearman's rank correlation coefficient for 2020:", corr)
-print("P-value for 2020:", pval)
-
-
-# shapiro test since my data is not normally distributed that gives the p value and correlation coefficient
+# shapiro test of normality
 statistic_happiness, p_value_happiness = shapiro(cleanedDataframe['2015_Index'])
 statistic_education, p_value_education = shapiro(cleanedDataframe['2015_Share of population with some formal education'])
 # moderate positive monotonic relationship between the variables and super small p value means statistically sig
@@ -92,7 +82,15 @@ statistic_education, p_value_education = shapiro(cleanedDataframe['2020_Share of
 print(f"Shapiro-Wilk Test for Happiness Index - Statistic 2020: {statistic_happiness}, P-value: {p_value_happiness}")
 print(f"Shapiro-Wilk Test for Education Levels - Statistic 2020: {statistic_education}, P-value: {p_value_education}")
 
-print(cleanedDataframe)
+
+# spearman rank test to test correlation
+corr, pval = spearmanr(cleanedDataframe['2015_Index'], cleanedDataframe['2015_Share of population with some formal education'])
+print("Spearman's rank correlation coefficient for 2015:", corr)
+print("P-value for 2015:", pval)
+
+corr, pval = spearmanr(cleanedDataframe['2020_Index'], cleanedDataframe['2020_Share of population with some formal education'])
+print("Spearman's rank correlation coefficient for 2020:", corr)
+print("P-value for 2020:", pval)
 
 
 fig, axes = mp.subplots(nrows=2, ncols=2, figsize=(12, 10))
@@ -125,19 +123,19 @@ mp.tight_layout()
 mp.show()
 
 
-def createAndDisplayBasicHappyStatistics(pivoted_df):
-    stdDev_2015 = round(pivoted_df['2015_Index'].std(), 2)
-    stdDev_2020 = round(pivoted_df['2020_Index'].std(), 2)
-    minIndex_2015 = round(pivoted_df['2015_Index'].min(), 2)
-    minIndex_2020 = round(pivoted_df['2020_Index'].min(), 2)
-    maxIndex_2015 = round(pivoted_df['2015_Index'].max(), 2)
-    maxIndex_2020 = round(pivoted_df['2020_Index'].max(), 2)
-    meanIndex_2015 = round(pivoted_df['2015_Index'].mean(), 2)
-    meanIndex_2020 = round(pivoted_df['2020_Index'].mean(), 2)
-    medianIndex_2015 = round(pivoted_df['2015_Index'].median(), 2)
-    medianIndex_2020 = round(pivoted_df['2020_Index'].median(), 2)
-    sampleSize_2015 = pivoted_df['2015_Index'].count()
-    sampleSize_2020 = pivoted_df['2020_Index'].count()
+def createAndDisplayBasicHappyStatistics(cleanedDataframe):
+    stdDev_2015 = round(cleanedDataframe['2015_Index'].std(), 2)
+    stdDev_2020 = round(cleanedDataframe['2020_Index'].std(), 2)
+    minIndex_2015 = round(cleanedDataframe['2015_Index'].min(), 2)
+    minIndex_2020 = round(cleanedDataframe['2020_Index'].min(), 2)
+    maxIndex_2015 = round(cleanedDataframe['2015_Index'].max(), 2)
+    maxIndex_2020 = round(cleanedDataframe['2020_Index'].max(), 2)
+    meanIndex_2015 = round(cleanedDataframe['2015_Index'].mean(), 2)
+    meanIndex_2020 = round(cleanedDataframe['2020_Index'].mean(), 2)
+    medianIndex_2015 = round(cleanedDataframe['2015_Index'].median(), 2)
+    medianIndex_2020 = round(cleanedDataframe['2020_Index'].median(), 2)
+    sampleSize_2015 = cleanedDataframe['2015_Index'].count()
+    sampleSize_2020 = cleanedDataframe['2020_Index'].count()
 
 
     fig, ax = mp.subplots()
@@ -158,19 +156,19 @@ def createAndDisplayBasicHappyStatistics(pivoted_df):
 createAndDisplayBasicHappyStatistics(cleanedDataframe)
 
 
-def createAndDisplayBasicEducationStatistics(pivoted_df):
-    stdDev_2015 = round(pivoted_df['2015_Share of population with some formal education'].std(), 2)
-    stdDev_2020 = round(pivoted_df['2020_Share of population with some formal education'].std(), 2)
-    minEducation_2015 = round(pivoted_df['2015_Share of population with some formal education'].min(), 2)
-    minEducation_2020 = round(pivoted_df['2020_Share of population with some formal education'].min(), 2)
-    maxEducation_2015 = round(pivoted_df['2015_Share of population with some formal education'].max(), 2)
-    maxEducation_2020 = round(pivoted_df['2020_Share of population with some formal education'].max(), 2)
-    meanEducation_2015 = round(pivoted_df['2015_Share of population with some formal education'].mean(), 2)
-    meanEducation_2020 = round(pivoted_df['2020_Share of population with some formal education'].mean(), 2)
-    medianEducation_2015 = round(pivoted_df['2015_Share of population with some formal education'].median(), 2)
-    medianEducation_2020 = round(pivoted_df['2020_Share of population with some formal education'].median(), 2)
-    sampleSize_2015 = pivoted_df['2015_Share of population with some formal education'].count()
-    sampleSize_2020 = pivoted_df['2020_Share of population with some formal education'].count()
+def createAndDisplayBasicEducationStatistics(cleanedDataframe):
+    stdDev_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].std(), 2)
+    stdDev_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].std(), 2)
+    minEducation_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].min(), 2)
+    minEducation_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].min(), 2)
+    maxEducation_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].max(), 2)
+    maxEducation_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].max(), 2)
+    meanEducation_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].mean(), 2)
+    meanEducation_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].mean(), 2)
+    medianEducation_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].median(), 2)
+    medianEducation_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].median(), 2)
+    sampleSize_2015 = cleanedDataframe['2015_Share of population with some formal education'].count()
+    sampleSize_2020 = cleanedDataframe['2020_Share of population with some formal education'].count()
 
 
     fig, ax = mp.subplots()
