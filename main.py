@@ -3,6 +3,7 @@ import matplotlib.pyplot as mp
 import seaborn as sb
 from scipy.stats import shapiro, spearmanr
 
+# before looking at levels of education
 
 def mergeDatasets(formal, happy):
     # merging datasets by country names
