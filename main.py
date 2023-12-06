@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as mp
 import seaborn as sb
 from scipy.stats import shapiro, spearmanr
+import numpy as np
+import statsmodels.api as sm
 
 # before looking at levels of education
 
@@ -114,8 +116,8 @@ formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Pyt
 happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
 
 
-pleaseWork = mergeEducationLevelsWithHappiness(threeLevelOfEducationDf, happinessIndex)
-pleaseWork = pleaseWork.drop(columns=['Country'])
+merged = mergeEducationLevelsWithHappiness(threeLevelOfEducationDf, happinessIndex)
+pleaseWork = merged.drop(columns=['Country'])
 pleaseWork = renameEducationLevelDf(pleaseWork)
 pleaseWork = createPivotedForNewDf(pleaseWork)
 pleaseWork = pleaseWork.dropna()
@@ -164,6 +166,46 @@ spearmanRankTest(pleaseWork['2015_Index'], pleaseWork['2015_tertiary enrollment'
 print()
 spearmanRankTest(pleaseWork['2020_Index'], pleaseWork['2020_secondary enrollment'])
 spearmanRankTest(pleaseWork['2020_Index'], pleaseWork['2020_tertiary enrollment'])
+
+fig, (ax1, ax2) = mp.subplots(1, 2, figsize=(12, 6))
+
+sb.regplot(x='2015_secondary enrollment', y='2015_Index', data=pleaseWork, color='red', ax=ax1)
+sb.regplot(x='2015_tertiary enrollment', y='2015_Index', data=pleaseWork, color='blue', ax=ax2)
+mp.show()
+
+
+
+# Alternatively, calculate the slope using correlation coefficient
+correlation_coefficient = np.corrcoef(pleaseWork['2015_Index'], pleaseWork['2015_secondary enrollment'])[0, 1]
+std_dev_x = np.std(pleaseWork['2015_Index'])
+std_dev_y = np.std(pleaseWork['2015_secondary enrollment'])
+
+slope_alternative = correlation_coefficient * (std_dev_y / std_dev_x)
+
+print("Slope using correlation coefficient:", slope_alternative)
+
+# Alternatively, calculate the slope using correlation coefficient
+correlation_coefficient = np.corrcoef(pleaseWork['2015_Index'], pleaseWork['2015_tertiary enrollment'])[0, 1]
+std_dev_x = np.std(pleaseWork['2015_Index'])
+std_dev_y = np.std(pleaseWork['2015_tertiary enrollment'])
+
+slope_alternative = correlation_coefficient * (std_dev_y / std_dev_x)
+
+print("Slope using correlation coefficient:", slope_alternative)
+
+
+
+# calculating slope of the line of best fit for tertiary and secondary in 2015
+x_with_constant = sm.add_constant(pleaseWork[['2015_secondary enrollment', '2015_tertiary enrollment']])
+
+# Fit the linear regression model
+model = sm.OLS(pleaseWork['2015_Index'], x_with_constant).fit()
+
+# Get the slope (beta1) from the model summary
+slope1 = model.params.iloc[1]
+slope2 = model.params.iloc[2]
+
+print("Slope (beta1):", slope1, 'Slope (beta2:)', slope2)
 
 
 
@@ -315,4 +357,3 @@ mp.xlabel('Share of population with some formal education 2015/2020')
 mp.ylabel('Happiness Index')
 mp.show()
 '''
-print()
