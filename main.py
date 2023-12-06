@@ -123,7 +123,7 @@ def spearmanRankTest(index, education):
 pd.set_option('display.max_columns', None)
 
 
-# loading  population with formal education and happiness index datasets
+# loading population with formal education and happiness index datasets
 formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\Formal Education.xlsx')
 happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
 # merging datasets of formal education and happiness index
