@@ -34,7 +34,6 @@ def mergeEducationLevelsWithHappiness(education, happy):
     return mergedDataset
 
 
-
 def renameEducationLevelDf(df):
     df.rename(columns={'School enrollment, primary (% gross)': 'primary enrollment'}, inplace=True)
     df.rename(columns={'School enrollment, secondary (% gross)': 'secondary enrollment'}, inplace=True)
@@ -42,7 +41,7 @@ def renameEducationLevelDf(df):
     return df
 
 
-def createPivotedForNewDf(merged):
+def createPivotedForLevelOfEducationDf(merged):
     # Pivot the DataFrame
     data = merged.pivot(index='Entity', columns='Year',
                               values=['Index', 'Rank', 'primary enrollment', 'secondary enrollment', 'tertiary enrollment'])
@@ -51,7 +50,6 @@ def createPivotedForNewDf(merged):
     # Reset the index to make 'Entity' a column again
     data.reset_index(inplace=True)
     return data
-
 
 
 def cleanDataframe(df):
@@ -97,29 +95,31 @@ def cleanDf(cleanedDataframe):
 pd.set_option('display.max_columns', None)
 
 
-# loading new datasets
+# loading level of education datasets
 enrollmentPrimary = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\PrimaryEducationEnrollment.xlsx')
 enrollmentSecondary = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\SecondaryEducationEnrollment.xlsx')
 enrollmentTertiary = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\TertiaryEducationEnrollment.xlsx')
-
+# cleaning up dataframes
 enrollmentPrimary = cleanEducationLevelDf(enrollmentPrimary)
 enrollmentSecondary = cleanEducationLevelDf(enrollmentSecondary)
 enrollmentTertiary = cleanEducationLevelDf(enrollmentTertiary)
-
+# merging level of enrollment of all three types of education into one
 threeLevelOfEducationDf = mergeLevelOfEducationDatasets(enrollmentPrimary, enrollmentSecondary)
 threeLevelOfEducationDf = mergeLevelOfEducationDatasets(threeLevelOfEducationDf, enrollmentTertiary)
 threeLevelOfEducationDf = filterYearsEducationLevelDf(threeLevelOfEducationDf)
 
 
-# loading datasets
+# loading  population with formal education and happiness index datasets
 formalEducation = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\Formal Education.xlsx')
 happinessIndex = pd.read_excel(r'C:\Users\kylea\OneDrive\2023 Fall Semester\Python\Datasets\Education & Happiness\World Happiness Index by Reports 2013-2023.xlsx')
 
-
+# creating merged dataframe of level of education and happiness index
 merged = mergeEducationLevelsWithHappiness(threeLevelOfEducationDf, happinessIndex)
+# filtering dataframe again
 pleaseWork = merged.drop(columns=['Country'])
 pleaseWork = renameEducationLevelDf(pleaseWork)
-pleaseWork = createPivotedForNewDf(pleaseWork)
+# creating dataframe with one entry for each country for year 2015 and 2020
+pleaseWork = createPivotedForLevelOfEducationDf(pleaseWork)
 pleaseWork = pleaseWork.dropna()
 print(pleaseWork)
 
@@ -168,13 +168,20 @@ spearmanRankTest(pleaseWork['2020_Index'], pleaseWork['2020_secondary enrollment
 spearmanRankTest(pleaseWork['2020_Index'], pleaseWork['2020_tertiary enrollment'])
 
 
-# making scatterplot
+# making scatterplot of tertiary vs secondary enrollment in 2015
 fig, (ax1, ax2) = mp.subplots(1, 2, figsize=(12, 6))
-
 sb.regplot(x='2015_secondary enrollment', y='2015_Index', data=pleaseWork, color='red', ax=ax1)
 sb.regplot(x='2015_tertiary enrollment', y='2015_Index', data=pleaseWork, color='blue', ax=ax2)
 mp.title('2015')
 mp.show()
+
+# making scatterplot of tertiary vs secondary enrollment in 2020
+fig, (ax1, ax2) = mp.subplots(1, 2, figsize=(12, 6))
+sb.regplot(x='2020_secondary enrollment', y='2020_Index', data=pleaseWork, color='red', ax=ax1)
+sb.regplot(x='2020_tertiary enrollment', y='2020_Index', data=pleaseWork, color='blue', ax=ax2)
+mp.title('2020')
+mp.show()
+
 
 # calculating slope of the line of best fit for tertiary and secondary in 2015
 x_with_constant = sm.add_constant(pleaseWork[['2015_secondary enrollment', '2015_tertiary enrollment']])
@@ -184,15 +191,6 @@ model = sm.OLS(pleaseWork['2015_Index'], x_with_constant).fit()
 slope1 = model.params.iloc[1]
 slope2 = model.params.iloc[2]
 print("Slope (beta1):", slope1, 'Slope (beta2:)', slope2)
-
-
-fig, (ax1, ax2) = mp.subplots(1, 2, figsize=(12, 6))
-
-sb.regplot(x='2020_secondary enrollment', y='2020_Index', data=pleaseWork, color='red', ax=ax1)
-sb.regplot(x='2020_tertiary enrollment', y='2020_Index', data=pleaseWork, color='blue', ax=ax2)
-mp.title('2020')
-mp.show()
-
 
 
 # calculating slope of the line of best fit for tertiary and secondary in 2020
@@ -205,7 +203,7 @@ slope2 = model.params.iloc[2]
 print("Slope (beta1):", slope1, 'Slope (beta2:)', slope2)
 
 
-#histograms of data for 2015
+# histograms of data for 2015
 fig, axes = mp.subplots(nrows=2, ncols=2, figsize=(12, 10))
 
 # Plot histogram for Happiness Index 2015
@@ -213,15 +211,12 @@ axes[0, 0].hist(pleaseWork['2015_Index'], bins='auto', edgecolor='black', color=
 axes[0, 0].set_title('Happiness Index in 2015')
 axes[0, 0].set_xlabel('Happiness Index')
 axes[0, 0].set_ylabel('Frequency')
-
 # Plot histogram for Happiness Index 2015
 axes[0, 1].hist(pleaseWork['2015_secondary enrollment'], bins='auto', edgecolor='black', color='lightcoral')
 axes[0, 1].set_title('Secondary enrollment in 2015')
 axes[0, 1].set_xlabel('Secondary enrollment')
 axes[0, 1].set_ylabel('Frequency')
-
 axes[1, 0].axis('off')
-
 # Plot histogram for Happiness Index 2015
 axes[1, 1].hist(pleaseWork['2015_tertiary enrollment'], bins='auto', edgecolor='black', color='lightcoral')
 axes[1, 1].set_title('Tertiary enrollment in 2015')
@@ -230,23 +225,20 @@ axes[1, 1].set_ylabel('Frequency')
 mp.tight_layout()
 mp.show()
 
-#histograms of data for 2020
-fig, axes = mp.subplots(nrows=2, ncols=2, figsize=(12, 10))
 
+# histograms of data for 2020
+fig, axes = mp.subplots(nrows=2, ncols=2, figsize=(12, 10))
 # Plot histogram for Happiness Index 2015
 axes[0, 0].hist(pleaseWork['2020_Index'], bins='auto', edgecolor='black', color='skyblue')
 axes[0, 0].set_title('Happiness Index in 2020')
 axes[0, 0].set_xlabel('Happiness Index')
 axes[0, 0].set_ylabel('Frequency')
-
 # Plot histogram for Happiness Index 2020
 axes[0, 1].hist(pleaseWork['2020_secondary enrollment'], bins='auto', edgecolor='black', color='lightcoral')
 axes[0, 1].set_title('Secondary enrollment in 2020')
 axes[0, 1].set_xlabel('Secondary enrollment')
 axes[0, 1].set_ylabel('Frequency')
-
 axes[1, 0].axis('off')
-
 # Plot histogram for Happiness Index 2020
 axes[1, 1].hist(pleaseWork['2020_tertiary enrollment'], bins='auto', edgecolor='black', color='lightcoral')
 axes[1, 1].set_title('Tertiary enrollment in 2020')
