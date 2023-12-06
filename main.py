@@ -167,45 +167,93 @@ print()
 spearmanRankTest(pleaseWork['2020_Index'], pleaseWork['2020_secondary enrollment'])
 spearmanRankTest(pleaseWork['2020_Index'], pleaseWork['2020_tertiary enrollment'])
 
+
+# making scatterplot
 fig, (ax1, ax2) = mp.subplots(1, 2, figsize=(12, 6))
 
 sb.regplot(x='2015_secondary enrollment', y='2015_Index', data=pleaseWork, color='red', ax=ax1)
 sb.regplot(x='2015_tertiary enrollment', y='2015_Index', data=pleaseWork, color='blue', ax=ax2)
+mp.title('2015')
+mp.show()
+
+# calculating slope of the line of best fit for tertiary and secondary in 2015
+x_with_constant = sm.add_constant(pleaseWork[['2015_secondary enrollment', '2015_tertiary enrollment']])
+# Fit the linear regression model
+model = sm.OLS(pleaseWork['2015_Index'], x_with_constant).fit()
+# Get the slope (beta1) and (beta2) from the model summary
+slope1 = model.params.iloc[1]
+slope2 = model.params.iloc[2]
+print("Slope (beta1):", slope1, 'Slope (beta2:)', slope2)
+
+
+fig, (ax1, ax2) = mp.subplots(1, 2, figsize=(12, 6))
+
+sb.regplot(x='2020_secondary enrollment', y='2020_Index', data=pleaseWork, color='red', ax=ax1)
+sb.regplot(x='2020_tertiary enrollment', y='2020_Index', data=pleaseWork, color='blue', ax=ax2)
+mp.title('2020')
 mp.show()
 
 
 
-# Alternatively, calculate the slope using correlation coefficient
-correlation_coefficient = np.corrcoef(pleaseWork['2015_Index'], pleaseWork['2015_secondary enrollment'])[0, 1]
-std_dev_x = np.std(pleaseWork['2015_Index'])
-std_dev_y = np.std(pleaseWork['2015_secondary enrollment'])
-
-slope_alternative = correlation_coefficient * (std_dev_y / std_dev_x)
-
-print("Slope using correlation coefficient:", slope_alternative)
-
-# Alternatively, calculate the slope using correlation coefficient
-correlation_coefficient = np.corrcoef(pleaseWork['2015_Index'], pleaseWork['2015_tertiary enrollment'])[0, 1]
-std_dev_x = np.std(pleaseWork['2015_Index'])
-std_dev_y = np.std(pleaseWork['2015_tertiary enrollment'])
-
-slope_alternative = correlation_coefficient * (std_dev_y / std_dev_x)
-
-print("Slope using correlation coefficient:", slope_alternative)
-
-
-
-# calculating slope of the line of best fit for tertiary and secondary in 2015
-x_with_constant = sm.add_constant(pleaseWork[['2015_secondary enrollment', '2015_tertiary enrollment']])
-
+# calculating slope of the line of best fit for tertiary and secondary in 2020
+x_with_constant = sm.add_constant(pleaseWork[['2020_secondary enrollment', '2020_tertiary enrollment']])
 # Fit the linear regression model
-model = sm.OLS(pleaseWork['2015_Index'], x_with_constant).fit()
-
-# Get the slope (beta1) from the model summary
+model = sm.OLS(pleaseWork['2020_Index'], x_with_constant).fit()
+# Get the slope (beta1) and (beta2) from the model summary
 slope1 = model.params.iloc[1]
 slope2 = model.params.iloc[2]
-
 print("Slope (beta1):", slope1, 'Slope (beta2:)', slope2)
+
+
+#histograms of data for 2015
+fig, axes = mp.subplots(nrows=2, ncols=2, figsize=(12, 10))
+
+# Plot histogram for Happiness Index 2015
+axes[0, 0].hist(pleaseWork['2015_Index'], bins='auto', edgecolor='black', color='skyblue')
+axes[0, 0].set_title('Happiness Index in 2015')
+axes[0, 0].set_xlabel('Happiness Index')
+axes[0, 0].set_ylabel('Frequency')
+
+# Plot histogram for Happiness Index 2015
+axes[0, 1].hist(pleaseWork['2015_secondary enrollment'], bins='auto', edgecolor='black', color='lightcoral')
+axes[0, 1].set_title('Secondary enrollment in 2015')
+axes[0, 1].set_xlabel('Secondary enrollment')
+axes[0, 1].set_ylabel('Frequency')
+
+axes[1, 0].axis('off')
+
+# Plot histogram for Happiness Index 2015
+axes[1, 1].hist(pleaseWork['2015_tertiary enrollment'], bins='auto', edgecolor='black', color='lightcoral')
+axes[1, 1].set_title('Tertiary enrollment in 2015')
+axes[1, 1].set_xlabel('Tertiary enrollment')
+axes[1, 1].set_ylabel('Frequency')
+mp.tight_layout()
+mp.show()
+
+#histograms of data for 2020
+fig, axes = mp.subplots(nrows=2, ncols=2, figsize=(12, 10))
+
+# Plot histogram for Happiness Index 2015
+axes[0, 0].hist(pleaseWork['2020_Index'], bins='auto', edgecolor='black', color='skyblue')
+axes[0, 0].set_title('Happiness Index in 2020')
+axes[0, 0].set_xlabel('Happiness Index')
+axes[0, 0].set_ylabel('Frequency')
+
+# Plot histogram for Happiness Index 2020
+axes[0, 1].hist(pleaseWork['2020_secondary enrollment'], bins='auto', edgecolor='black', color='lightcoral')
+axes[0, 1].set_title('Secondary enrollment in 2020')
+axes[0, 1].set_xlabel('Secondary enrollment')
+axes[0, 1].set_ylabel('Frequency')
+
+axes[1, 0].axis('off')
+
+# Plot histogram for Happiness Index 2020
+axes[1, 1].hist(pleaseWork['2020_tertiary enrollment'], bins='auto', edgecolor='black', color='lightcoral')
+axes[1, 1].set_title('Tertiary enrollment in 2020')
+axes[1, 1].set_xlabel('Tertiary enrollment')
+axes[1, 1].set_ylabel('Frequency')
+mp.tight_layout()
+mp.show()
 
 
 
