@@ -118,12 +118,52 @@ pleaseWork = mergeEducationLevelsWithHappiness(threeLevelOfEducationDf, happines
 pleaseWork = pleaseWork.drop(columns=['Country'])
 pleaseWork = renameEducationLevelDf(pleaseWork)
 pleaseWork = createPivotedForNewDf(pleaseWork)
+pleaseWork = pleaseWork.dropna()
 print(pleaseWork)
 
 
+def shapiroTest(data):
+    statistic, p_value = shapiro(data)
+    print("Test Statistic:", statistic, "P-Value:", p_value)
+    if p_value < 0.05:
+        print('Data is not normally distributed')
+    else:
+        print('Data is normally distributed')
 
 
+def spearmanRankTest(index, education):
+    coefficient, p_value = spearmanr(index, education)
+    print('coefficient:', coefficient, 'P-value:', p_value)
 
+    if 0 < coefficient < 0.4:
+        print('Weak relationship')
+    elif 0.39 < coefficient < 0.6:
+        print('Moderate relationship')
+    elif 0.59 < coefficient < 0.8:
+        print('Strong relationship')
+    elif 0.79 < coefficient < 1:
+        print('Very strong relationship')
+
+    if p_value < 0.05:
+        print('There is statistical significant correlation')
+    else:
+        print('There is not a statistical significant correlation')
+
+print()
+shapiroTest(pleaseWork['2015_Index'])
+shapiroTest(pleaseWork['2020_Index'])
+
+shapiroTest(pleaseWork['2015_secondary enrollment'])
+shapiroTest(pleaseWork['2020_secondary enrollment'])
+shapiroTest(pleaseWork['2015_tertiary enrollment'])
+shapiroTest(pleaseWork['2020_tertiary enrollment'])
+print()
+
+spearmanRankTest(pleaseWork['2015_Index'], pleaseWork['2015_secondary enrollment'])
+spearmanRankTest(pleaseWork['2015_Index'], pleaseWork['2015_tertiary enrollment'])
+print()
+spearmanRankTest(pleaseWork['2020_Index'], pleaseWork['2020_secondary enrollment'])
+spearmanRankTest(pleaseWork['2020_Index'], pleaseWork['2020_tertiary enrollment'])
 
 
 
@@ -147,13 +187,11 @@ print(cleanedDataframe)
 # shapiro test of normality
 statistic_happiness, p_value_happiness = shapiro(cleanedDataframe['2015_Index'])
 statistic_education, p_value_education = shapiro(cleanedDataframe['2015_Share of population with some formal education'])
-# moderate positive monotonic relationship between the variables and super small p value means statistically sig
 print(f"Shapiro-Wilk Test for Happiness Index - Statistic 2015: {statistic_happiness}, P-value: {p_value_happiness}")
 print(f"Shapiro-Wilk Test for Education Levels - Statistic 2015: {statistic_education}, P-value: {p_value_education}")
 
 statistic_happiness, p_value_happiness = shapiro(cleanedDataframe['2020_Index'])
 statistic_education, p_value_education = shapiro(cleanedDataframe['2020_Share of population with some formal education'])
-#moderate postiive monotonic relationship and p val is small which means statistical sig
 print(f"Shapiro-Wilk Test for Happiness Index - Statistic 2020: {statistic_happiness}, P-value: {p_value_happiness}")
 print(f"Shapiro-Wilk Test for Education Levels - Statistic 2020: {statistic_education}, P-value: {p_value_education}")
 
