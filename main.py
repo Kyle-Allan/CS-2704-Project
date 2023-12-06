@@ -165,9 +165,9 @@ print(levelEducationHappinessMerged)
 
 
 print('Shapiro for 2015 index')
-shapiroTest(levelEducationHappinessMerged['2015_Index'])
+shapiroTest(formalEducationHappinessMerged['2015_Index'])
 print('Shapiro for 2020 index')
-shapiroTest(levelEducationHappinessMerged['2020_Index'])
+shapiroTest(formalEducationHappinessMerged['2020_Index'])
 print('Shapiro for 2015 formal education')
 shapiroTest(formalEducationHappinessMerged['2015_Share of population with some formal education'])
 print('Shapiro for 2020 formal education')
