@@ -257,8 +257,6 @@ mp.show()
 
 
 
-
-
 '''
 # merging datasets
 merged = mergeDatasets(formalEducation, happinessIndex)
