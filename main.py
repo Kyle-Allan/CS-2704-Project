@@ -211,77 +211,49 @@ mp.tight_layout()
 mp.show()
 
 
-def createAndDisplayBasicHappyStatistics(cleanedDataframe):
-    stdDev_2015 = round(cleanedDataframe['2015_Index'].std(), 2)
-    stdDev_2020 = round(cleanedDataframe['2020_Index'].std(), 2)
-    minIndex_2015 = round(cleanedDataframe['2015_Index'].min(), 2)
-    minIndex_2020 = round(cleanedDataframe['2020_Index'].min(), 2)
-    maxIndex_2015 = round(cleanedDataframe['2015_Index'].max(), 2)
-    maxIndex_2020 = round(cleanedDataframe['2020_Index'].max(), 2)
-    meanIndex_2015 = round(cleanedDataframe['2015_Index'].mean(), 2)
-    meanIndex_2020 = round(cleanedDataframe['2020_Index'].mean(), 2)
-    medianIndex_2015 = round(cleanedDataframe['2015_Index'].median(), 2)
-    medianIndex_2020 = round(cleanedDataframe['2020_Index'].median(), 2)
-    sampleSize_2015 = cleanedDataframe['2015_Index'].count()
-    sampleSize_2020 = cleanedDataframe['2020_Index'].count()
-
-
-    fig, ax = mp.subplots()
-    ax.axis('off')  # Turn off axis for table
-    # Table data
-    table_data = [['2015', sampleSize_2015, minIndex_2015, maxIndex_2015, meanIndex_2015, medianIndex_2015, stdDev_2015],
-                  ['2020', sampleSize_2020, minIndex_2020, maxIndex_2020, meanIndex_2020, medianIndex_2020, stdDev_2020]]
-    # Create a table
-    table = ax.table(cellText=table_data, colLabels=['Year', 'Sample Size', 'Min Index', 'Max Index', 'Mean Index', 'Median Index',  'Standard Deviation'], cellLoc='center', loc='center')
-    table.auto_set_font_size(False)
-    table.set_fontsize(18)
-    table.auto_set_column_width([0, 1, 2, 3, 4, 5, 6])
-    # Display the table
-    mp.title('Happiness Statistics', fontsize=20)
-    mp.show()
-
-
-createAndDisplayBasicHappyStatistics(formalEducationHappinessMerged)
-
-
-def createAndDisplayBasicEducationStatistics(cleanedDataframe):
-    stdDev_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].std(), 2)
-    stdDev_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].std(), 2)
-    minEducation_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].min(), 2)
-    minEducation_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].min(), 2)
-    maxEducation_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].max(), 2)
-    maxEducation_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].max(), 2)
-    meanEducation_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].mean(), 2)
-    meanEducation_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].mean(), 2)
-    medianEducation_2015 = round(cleanedDataframe['2015_Share of population with some formal education'].median(), 2)
-    medianEducation_2020 = round(cleanedDataframe['2020_Share of population with some formal education'].median(), 2)
-    sampleSize_2015 = cleanedDataframe['2015_Share of population with some formal education'].count()
-    sampleSize_2020 = cleanedDataframe['2020_Share of population with some formal education'].count()
-
+def createAndDisplayTableOfBasicStatistics(df, titleOfDF, firstYearColumn, secondYearColumn):
+    stdDev_2015 = round(df[firstYearColumn].std(), 2)
+    stdDev_2020 = round(df[secondYearColumn].std(), 2)
+    minIndex_2015 = round(df[firstYearColumn].min(), 2)
+    minIndex_2020 = round(df[secondYearColumn].min(), 2)
+    maxIndex_2015 = round(df[firstYearColumn].max(), 2)
+    maxIndex_2020 = round(df[secondYearColumn].max(), 2)
+    meanIndex_2015 = round(df[firstYearColumn].mean(), 2)
+    meanIndex_2020 = round(df[secondYearColumn].mean(), 2)
+    medianIndex_2015 = round(df[firstYearColumn].median(), 2)
+    medianIndex_2020 = round(df[secondYearColumn].median(), 2)
+    sampleSize_2015 = df[firstYearColumn].count()
+    sampleSize_2020 = df[secondYearColumn].count()
 
     fig, ax = mp.subplots()
     ax.axis('off')  # Turn off axis for table
     # Table data
-    table_data = [['2015', sampleSize_2015, minEducation_2015, maxEducation_2015, meanEducation_2015, medianEducation_2015, stdDev_2015],
-                  ['2020', sampleSize_2020, minEducation_2020, maxEducation_2020, meanEducation_2020, medianEducation_2020, stdDev_2020]]
+    table_data = [
+        ['2015', sampleSize_2015, minIndex_2015, maxIndex_2015, meanIndex_2015, medianIndex_2015, stdDev_2015],
+        ['2020', sampleSize_2020, minIndex_2020, maxIndex_2020, meanIndex_2020, medianIndex_2020, stdDev_2020]]
     # Create a table
     table = ax.table(cellText=table_data,
-                     colLabels=['Year', 'Sample Size', 'Min Education Percent', 'Max Education Percent', 'Mean Education Percent', 'Median Education Percent', 'Standard Deviation'],
-                     cellLoc='center', loc='center')
+                     colLabels=['Year', 'Sample Size', 'Min ' + titleOfDF, 'Max ' + titleOfDF, 'Mean ' + titleOfDF, 'Median ' + titleOfDF,
+                                'Standard Deviation ' + titleOfDF], cellLoc='center', loc='center')
     table.auto_set_font_size(False)
     table.set_fontsize(18)
     table.auto_set_column_width([0, 1, 2, 3, 4, 5, 6])
     # Display the table
-    mp.title('Education Statistics', fontsize=20)
+    mp.title(titleOfDF, fontsize=20)
     mp.show()
 
 
-createAndDisplayBasicEducationStatistics(formalEducationHappinessMerged)
+createAndDisplayTableOfBasicStatistics(formalEducationHappinessMerged, 'Happiness Index', '2015_Index', '2020_Index')
+createAndDisplayTableOfBasicStatistics(formalEducationHappinessMerged, 'Formal Education', '2015_Share of population with some formal education', '2020_Share of population with some formal education')
+createAndDisplayTableOfBasicStatistics(levelEducationHappinessMerged, 'Secondary Enrollment', '2015_secondary enrollment', '2020_secondary enrollment')
+createAndDisplayTableOfBasicStatistics(levelEducationHappinessMerged, 'Tertiary Enrollment', '2015_tertiary enrollment', '2020_tertiary enrollment')
+
+
 
 
 sb.lmplot(x='Share of population with some formal education, 1820-2020', y='Index', hue='Year', data=merged, scatter_kws={'s': 50}, height=6, aspect=1.5)
-mp.xlabel('Share of population with some formal education 2015/2020')
-mp.ylabel('Happiness Index')
+mp.xlabel('Countries with share of population with some formal education 2015/2020')
+mp.ylabel('Countries Happiness Index')
 mp.show()
 
 
